@@ -1,0 +1,45 @@
+{
+  "name": "smplstcscntsts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "electron.cjs",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "electron": "electron .",
+    "electron:dev": "concurrently -k \"vite\" \"wait-on tcp:5173 && electron .\"",
+    "electron:build": "vite build && electron-builder"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0",
+    "electron": "^34.0.0",
+    "electron-builder": "^25.0.0",
+    "vite": "^8.3.0",
+    "wait-on": "^8.0.0"
+  },
+  "dependencies": {
+    "three": "^0.186.0"
+  },
+  "build": {
+    "appId": "com.smplstcscntsts.world",
+    "productName": "SMPLSTCSCNTSTS",
+    "directories": {
+      "output": "dist-electron"
+    },
+    "mac": {
+      "category": "public.app-category.social-networking",
+      "target": "dmg"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  },
+  "allowScripts": {
+    "electron@34.5.8": true
+  }
+}
