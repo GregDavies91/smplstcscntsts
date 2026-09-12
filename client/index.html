@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>P2P World</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { overflow: hidden; background: #1a1a2e; font-family: system-ui, sans-serif; }
+      #app { width: 100vw; height: 100vh; }
+      canvas { display: block; }
+      
+      #hud {
+        position: fixed; top: 16px; left: 16px;
+        color: #fff; font-size: 14px; pointer-events: none;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+      }
+      #hud .peers { margin-top: 8px; }
+      #hud .peer { opacity: 0.7; }
+      
+      #mic-indicator {
+        position: fixed; top: 16px; right: 16px;
+        width: 12px; height: 12px; border-radius: 50%;
+        background: #4ade80; box-shadow: 0 0 8px #4ade80;
+        transition: opacity 0.2s;
+      }
+      #mic-indicator.muted { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
+      
+      #controls-help {
+        position: fixed; bottom: 16px; left: 16px;
+        color: rgba(255,255,255,0.5); font-size: 12px; pointer-events: none;
+      }
+      
+      #join-modal {
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,0.85);
+        display: flex; align-items: center; justify-content: center;
+        z-index: 100;
+      }
+      #join-modal .card {
+        background: #16213e; border-radius: 12px;
+        padding: 32px; width: 360px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      }
+      #join-modal h2 { color: #fff; margin-bottom: 16px; }
+      #join-modal label { color: rgba(255,255,255,0.7); font-size: 13px; display: block; margin-bottom: 4px; }
+      #join-modal input {
+        width: 100%; padding: 10px 14px; border-radius: 8px;
+        border: 1px solid rgba(255,255,255,0.1);
+        background: rgba(0,0,0,0.3); color: #fff;
+        font-size: 14px; margin-bottom: 16px;
+        outline: none;
+      }
+      #join-modal input:focus { border-color: #6366f1; }
+      #join-modal button {
+        width: 100%; padding: 12px; border-radius: 8px;
+        border: none; background: #6366f1; color: #fff;
+        font-size: 15px; font-weight: 600; cursor: pointer;
+        transition: background 0.2s;
+      }
+      #join-modal button:hover { background: #4f46e5; }
+      #join-modal .hint {
+        color: rgba(255,255,255,0.4); font-size: 12px;
+        margin-top: 12px; text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    
+    <div id="hud">
+      <div id="room-display">Not connected</div>
+      <div class="peers" id="peers-list"></div>
+    </div>
+    
+    <div id="mic-indicator" class="muted"></div>
+    
+    <div id="controls-help">
+      WASD to move · Mouse to look · Click to lock cursor · I to import 3D model
+    </div>
+    
+    <div id="join-modal">
+      <div class="card">
+        <h2>Join World</h2>
+        <label for="room-input">Room ID</label>
+        <input id="room-input" type="text" placeholder="e.g. my-room-123" value="gregs-world" />
+        <label for="name-input">Your Name</label>
+        <input id="name-input" type="text" placeholder="Anonymous" value="Player" />
+        <button id="join-btn">Connect</button>
+        <div class="hint">Share the Room ID with friends to meet up</div>
+      </div>
+    </div>
+    
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
