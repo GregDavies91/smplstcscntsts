@@ -175,11 +175,16 @@ class App {
   updatePeerVolume(peerId) {
     const peer = this.peers.get(peerId);
     if (!peer?.audioEl) return;
-    
+
     const myPos = this.world.getPlayerPosition();
     const peerPos = peer.mesh.position;
-    const dist = myPos.distanceTo(peerPos);
     
+    // Calculate distance manually (myPos is plain object, peerPos is Vector3)
+    const dx = myPos.x - peerPos.x;
+    const dy = myPos.y - peerPos.y;
+    const dz = myPos.z - peerPos.z;
+    const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+
     // Proximity: full volume at 0m, silent at 20m
     const maxDist = 20;
     const volume = Math.max(0, 1 - (dist / maxDist));
