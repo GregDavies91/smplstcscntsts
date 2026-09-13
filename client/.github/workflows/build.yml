@@ -1,0 +1,88 @@
+name: Build & Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-mac:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: client/package-lock.json
+      - run: npm ci
+        working-directory: client
+      - run: npm run electron:build
+        working-directory: client
+      - name: Upload Mac artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-mac
+          path: dist-electron/*.dmg
+          if-no-files-found: error
+
+  build-win:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: client/package-lock.json
+      - run: npm ci
+        working-directory: client
+      - run: npm run electron:build
+        working-directory: client
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-win
+          path: dist-electron/*-setup.exe
+          if-no-files-found: error
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: client/package-lock.json
+      - run: npm ci
+        working-directory: client
+      - run: npm run electron:build
+        working-directory: client
+      - name: Upload Linux artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-linux
+          path: dist-electron/*.AppImage
+          if-no-files-found: error
+
+  release:
+    needs: [build-mac, build-win, build-linux]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Download all builds
+        uses: actions/download-artifact@v4
+        with:
+          path: all-builds
+      - name: List downloaded files
+        run: find all-builds -type f | sort
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: all-builds/**/*.{dmg,exe,AppImage}
+          fail_on_unmatched_files: false
+          draft: false
+          prerelease: false
+          generate_release_notes: true
