@@ -101,7 +101,7 @@ export class World {
     document.addEventListener('keyup', (e) => { this.keys[e.code] = false; });
     
     document.addEventListener('click', () => {
-      if (!this.isLocked) {
+      if (!this.isLocked && document.getElementById('join-modal').style.display === 'none') {
         document.body.requestPointerLock();
       }
     });
@@ -156,6 +156,14 @@ export class World {
   
   createPeerMesh(peerId) {
     const group = new THREE.Group();
+    
+    // Spawn at a random offset so peers don't overlap
+    const spawnOffset = new THREE.Vector3(
+      (Math.random() - 0.5) * 10,
+      0,
+      (Math.random() - 0.5) * 10
+    );
+    group.position.copy(spawnOffset);
     
     // Body
     const bodyGeo = new THREE.CapsuleGeometry(0.4, 1, 4, 8);
