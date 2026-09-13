@@ -18,7 +18,7 @@ export class Network {
     }
   }
   
-  join(roomId, name) {
+  join(roomId, name, password) {
     this.roomId = roomId;
     this.peerId = name + '-' + Math.random().toString(36).slice(2, 8);
     
@@ -28,7 +28,8 @@ export class Network {
       this.ws.send(JSON.stringify({
         type: 'join',
         roomId: this.roomId,
-        peerId: this.peerId
+        peerId: this.peerId,
+        password: password || null
       }));
     };
     
@@ -46,6 +47,9 @@ export class Network {
           break;
         case 'signal':
           this.emit('signal', { from: msg.from, signal: msg.signal });
+          break;
+        case 'error':
+          this.emit('error', msg.reason);
           break;
       }
     };
