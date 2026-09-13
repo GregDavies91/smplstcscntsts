@@ -28,6 +28,23 @@ class App {
         this.createPeerConnection(peerId, true);
       }
     });
+
+    this.network.on('error', (reason) => {
+      const modal = document.getElementById('join-modal');
+      const existingError = modal.querySelector('.error-msg');
+      if (existingError) existingError.remove();
+      
+      const errDiv = document.createElement('div');
+      errDiv.className = 'error-msg';
+      errDiv.style.cssText = 'background:#ef4444;color:#fff;padding:10px 14px;border-radius:8px;margin-bottom:16px;font-size:13px;text-align:center;';
+      errDiv.textContent = reason === 'wrong_password' 
+        ? '❌ Wrong password. Try again.' 
+        : reason === 'invalid_input'
+        ? '❌ Invalid room ID.'
+        : '❌ Connection error.';
+      
+      modal.querySelector('.card').insertBefore(errDiv, modal.querySelector('.card h2').nextSibling);
+    });
     
     this.network.on('peer-joined', (peerId) => {
       // Someone new joined — they'll initiate, but we also create the data channel
@@ -197,9 +214,10 @@ class App {
     const joinBtn = document.getElementById('join-btn');
     joinBtn.addEventListener('click', () => {
       const roomId = document.getElementById('room-input').value.trim();
+      const password = document.getElementById('password-input').value;
       const name = document.getElementById('name-input').value.trim() || 'Player';
       if (roomId) {
-        this.join(roomId, name);
+        this.join(roomId, name, password);
       }
     });
     
@@ -211,7 +229,7 @@ class App {
     }, 100);
   }
   
-  async join(roomId, name) {
+  async join(roomId, name, password) {
     this.voice.onLocalStream = (stream) => {
       // Add track to all existing peer connections
       for (const [, peer] of this.peers) {
@@ -225,7 +243,7 @@ class App {
     };
     
     await this.voice.init();
-    this.network.join(roomId, name);
+    this.network.join(roomId, name, password);
   }
 }
 
